@@ -19,10 +19,11 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("${rootDir}/keystore/release.jks")
-            storePassword "android"
-            keyAlias "release"
-            keyPassword "android"
+            def keystorePath = project.hasProperty('RELEASE_STORE_FILE') ? project.property('RELEASE_STORE_FILE') : "${rootDir}/keystore/release.jks"
+            storeFile file(keystorePath)
+            storePassword = project.hasProperty('RELEASE_STORE_PASSWORD') ? project.property('RELEASE_STORE_PASSWORD') : System.getenv('RELEASE_STORE_PASSWORD') ?: 'android'
+            keyAlias = project.hasProperty('RELEASE_KEY_ALIAS') ? project.property('RELEASE_KEY_ALIAS') : System.getenv('RELEASE_KEY_ALIAS') ?: 'release'
+            keyPassword = project.hasProperty('RELEASE_KEY_PASSWORD') ? project.property('RELEASE_KEY_PASSWORD') : System.getenv('RELEASE_KEY_PASSWORD') ?: 'android'
         }
     }
 

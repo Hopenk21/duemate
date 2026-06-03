@@ -7,6 +7,11 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    env:
+      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+      RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+      RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -31,6 +36,17 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: '8.4'
+      - name: Prepare keystore from secrets (if provided)
+        run: |
+          set -e
+          mkdir -p keystore
+          if [ -n "${KEYSTORE_BASE64}" ]; then
+            echo "Decoding keystore from KEYSTORE_BASE64 secret"
+            echo "$KEYSTORE_BASE64" | base64 --decode > keystore/release.jks
+            ls -l keystore/release.jks
+          else
+            echo "No KEYSTORE_BASE64 provided; using existing keystore if present"
+          fi
       - name: Build Release APK
         run: gradle assembleRelease --no-daemon
       - name: Create GitHub Release
