@@ -11,12 +11,19 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Install Android SDK components
+      - name: Install Android SDK command-line tools and components
         run: |
           set -e
-          echo "Installing Android SDK components"
-          yes | sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" "cmdline-tools;latest"
-          yes | sdkmanager --licenses
+          echo "Installing Android SDK command-line tools and components"
+          ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}"
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+          cd /tmp
+          curl -sSLo commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip -q commandlinetools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+          mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest" || true
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH"
+          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-33" "build-tools;33.0.2" "cmdline-tools;latest"
+          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         with:
