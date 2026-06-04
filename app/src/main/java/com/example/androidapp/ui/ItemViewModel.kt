@@ -8,6 +8,8 @@ import com.example.androidapp.data.AppDatabase
 import com.example.androidapp.data.Item
 import com.example.androidapp.repo.ItemRepository
 import kotlinx.coroutines.launch
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 class ItemViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: ItemRepository
@@ -36,11 +38,8 @@ class ItemViewModel(application: Application) : AndroidViewModel(application) {
 }
 
 // Small helper LiveData wrapper so we can postValue easily
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-
 class MutableLiveDataEx<T> : MutableLiveData<T>() {
-    public override fun postValue(value: T) {
+    override fun postValue(value: T) {
         super.postValue(value)
     }
 }
