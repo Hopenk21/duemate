@@ -18,6 +18,15 @@ class AddEditActivity : AppCompatActivity() {
         val descField = findViewById<TextInputEditText>(R.id.input_description)
         val saveBtn = findViewById<MaterialButton>(R.id.btn_save)
 
+        // If editing an existing item, prefill fields
+        val existingId = intent.getIntExtra("item_id", 0)
+        if (existingId != 0) {
+            val existingTitle = intent.getStringExtra("item_title")
+            val existingDesc = intent.getStringExtra("item_description")
+            titleField.setText(existingTitle)
+            descField.setText(existingDesc)
+        }
+
         saveBtn.setOnClickListener {
             val title = titleField.text?.toString()?.trim()
             val desc = descField.text?.toString()?.trim()
@@ -26,10 +35,10 @@ class AddEditActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val item = Item(title = title, description = desc)
             val data = Intent()
-            data.putExtra("item_title", item.title)
-            data.putExtra("item_description", item.description)
+            data.putExtra("item_title", title)
+            data.putExtra("item_description", desc)
+            if (existingId != 0) data.putExtra("item_id", existingId)
             setResult(Activity.RESULT_OK, data)
             finish()
         }
