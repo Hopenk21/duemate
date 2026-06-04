@@ -17,14 +17,24 @@ class AddEditActivity : AppCompatActivity() {
         val titleField = findViewById<TextInputEditText>(R.id.input_title)
         val descField = findViewById<TextInputEditText>(R.id.input_description)
         val saveBtn = findViewById<MaterialButton>(R.id.btn_save)
+        val cancelBtn = findViewById<MaterialButton>(R.id.btn_cancel)
 
         // If editing an existing item, prefill fields
         val existingId = intent.getIntExtra("item_id", 0)
-        if (existingId != 0) {
+        val isEdit = existingId != 0
+        if (isEdit) {
+            supportActionBar?.title = "Edit Item"
             val existingTitle = intent.getStringExtra("item_title")
             val existingDesc = intent.getStringExtra("item_description")
             titleField.setText(existingTitle)
             descField.setText(existingDesc)
+        } else {
+            supportActionBar?.title = "Add Item"
+        }
+
+        cancelBtn.setOnClickListener {
+            setResult(RESULT_CANCELED)
+            finish()
         }
 
         saveBtn.setOnClickListener {
